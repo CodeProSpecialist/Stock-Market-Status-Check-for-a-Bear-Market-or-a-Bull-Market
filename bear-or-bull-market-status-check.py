@@ -42,10 +42,24 @@ def display_next_run_time():
 symbol = "SPY"
 
 while True:
+
+    print("\n")
+
     display_current_time()
+
+    print("\n")
+
     result = check_market_trend(symbol)
+
+    print("\n")
+
     print(result)
+
+    print("\n")
+
     display_next_run_time()
-    
+
+    print("\n")
+
     # Sleep for 24 hours
     time.sleep(24 * 60 * 60)
