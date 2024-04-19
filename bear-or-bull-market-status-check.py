@@ -7,21 +7,23 @@ import time
 def check_market_trend(symbol):
     # Get historical data for the past 2 days, including pre-market
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=2)
+    start_date = end_date - timedelta(days=14)
     data = yf.download(symbol, start=start_date, end=end_date)
 
     # Convert data to Eastern Time
     eastern = pytz.timezone('US/Eastern')
     data.index = data.index.tz_localize('UTC').tz_convert(eastern)
 
-    # Filter data for pre-market hours (4am to 9am Eastern Time)
-    pre_market_data = data.between_time("04:00", "09:00")
+    # Calculate percentage change in closing prices
+    price_change = (data["Close"].iloc[-1] - data["Close"].iloc[0]) / data["Close"].iloc[0] * 100
 
-    # Check if overall price decreased during pre-market
-    if pre_market_data["Close"].pct_change().sum() < 0:
-        return "The stock market is currently a Bear Market."
+    # Check if overall price increased or decreased
+    if price_change > 0:
+        return "The stock market is currently a Bull Market: +{:.2f}% during past 14 days.".format(price_change)
+    elif price_change < 0:
+        return "The stock market is currently a Bear Market: -{:.2f}% during past 14 days.".format(abs(price_change))
     else:
-        return "The stock market is currently a Bull Market."
+        return "The stock market prices remained unchanged."
 
 # Function to display formatted date and time in Eastern Time
 def display_current_time():
